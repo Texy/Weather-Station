@@ -1,7 +1,6 @@
-# From 24th March 2016 these instructions are superseded...
-by the guides and tutorials at [https://github.com/raspberrypilearning/weather\_station\_guide](https://github.com/raspberrypilearning/weather_station_guide) (published at [www.raspberrypi.org/weather-station](www.raspberrypi.org/weather-station))
+To be used in conjunction with the guides and tutorials at [https://github.com/raspberrypilearning/weather\_station\_guide](https://github.com/raspberrypilearning/weather_station_guide) (published at [www.raspberrypi.org/weather-station](www.raspberrypi.org/weather-station))
 
-This repo is for code and technical stuff.
+This repo is for code and technical stuff specifically for Texy's weather station shield.
 
 ----------
 
@@ -13,7 +12,7 @@ Data logging code for the Raspberry Pi Weather Station Shield by Texy
 
 ## Instructions to deploy
 
-1. Start with a fresh install of Raspbian. Boot up as per usual and expand the filesystem to fill the SD card.
+1. Start with a fresh install of Raspbian or Raspbian Lite.
 1. Enable I²C. Enter the following command after logging into your Pi:
 
   `sudo raspi-config`
@@ -28,14 +27,20 @@ Data logging code for the Raspberry Pi Weather Station Shield by Texy
   
   The ARM I2C interface is enabled `Ok` > `Enter`
   
-  Would you like the I2C kernel module to be loaded by default? `Yes` > `Enter`
   
-  I2C kernel module will now be loaded by default `Ok` > `Enter`
+1. Enable 1-Wire.   
+  Select `Advanced Options` and press `Enter`
+  
+  Select `1-Wire` and press `Enter`
+  
+  Enable one-Wire interface? `Enable` > `Enter`
+  
+  One-wire interface is enabled `Ok` > `Enter`
   
   Select `Finish` from the main menu and press `Enter`
   
   Would you like to reboot now? `Yes` > `Enter`
-
+  
 1. Log back in and configure the required device tree overlays. Enter the following command:
 
   `sudo nano /boot/config.txt`
@@ -43,17 +48,20 @@ Data logging code for the Raspberry Pi Weather Station Shield by Texy
   Add the following lines to the bottom of the file:
   
   ```
-  dtoverlay=w1-gpio
-  dtoverlay=pcf8523-rtc
+  dtoverlay=i2c-rtc,ds3231
   ```
+  Confirm that the following lines are already present, if not add them :
   
+  dtparam=i2c_arm=on
+  dtoverlay=w1-gpio
+
   Press `Ctrl - O` then `Enter` to save and `Ctrl - X` to quit nano.
 
   Now set the required modules to load automatically on boot.
 
   `sudo nano /etc/modules`
   
-  Add the following lines to the bottom of the file:
+  If not already present, add the following lines to the bottom of the file:
   
   ```
   i2c-dev
@@ -89,31 +97,6 @@ Data logging code for the Raspberry Pi Weather Station Shield by Texy
   
   You can passively display the time in the RTC using: `sudo hwclock -r`
 
-1. Enable setting the system clock automatically at boot time. First edit the hwclock udev rule:
-
-  `sudo nano /lib/udev/hwclock-set`
-  
-  Find the lines at the bottom that read:
-  
-  ```
-  if [ yes = "$BADYEAR" ] ; then
-      /sbin/hwclock --rtc=$dev --systz --badyear
-  else
-      /sbin/hwclock --rtc=$dev --systz
-  fi
-  ```
-
-  Change the `--systz` options to `--hctosys` so that they read:
-  
-  ```
-  if [ yes = "$BADYEAR" ] ; then
-      /sbin/hwclock --rtc=$dev --hctosys --badyear
-  else
-      /sbin/hwclock --rtc=$dev --hctosys
-  fi
-  ```
-
-  Press `Ctrl - O` then `Enter` to save and `Ctrl - X` to quit nano.
 
 1. Install the necessary software packages.
 
@@ -180,30 +163,29 @@ Data logging code for the Raspberry Pi Weather Station Shield by Texy
   Expected output:
   
   ```
-       0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
-  00:          -- -- -- -- -- -- -- -- -- -- -- -- -- 
-  10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
-  20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
-  30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
-  40: 40 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
-  50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
-  60: -- -- -- -- -- -- -- -- UU 69 6a -- -- -- -- -- 
-  70: -- -- -- -- -- -- -- 77                         
+     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+00:          -- -- -- -- -- -- -- -- -- -- -- -- --
+10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+40: 40 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+50: -- -- -- -- -- -- -- 57 -- -- -- -- -- -- -- --
+60: -- -- -- -- -- -- -- -- UU 69 -- -- -- -- -- --
+70: -- -- -- -- -- -- 76 --
+                       
   ```
   
-  - `40` = HTU21D. Humidity and temperature sensor.
-  - `77` = BMP180. Barometric pressure sensor.
-  - `68` = PCF8523. Real Time Clock, it will show as `UU` because it's reserved by the driver.
-  - `69` = MCP3427. Analogue to Digital Converter on main board.
-  - `6a` = MCP3427. Analogue to Digital Converter on snap off AIR board (not present on prototype version).
+  - `40` = HTU21D. Humidity and temperature sensor module.
+  - `57` = EEPROM on the RTC module, this is not used.
+  - `68` = DS3231. Real Time Clock module, it will show as `UU` because it's reserved by the driver.
+  - `69` = MCP3428. Analogue to Digital Converter.
+  - `76` = BME280 presure, humdity and temperature sensor module
 
-  Note: `40`, `77` and `6a` will only show if you have connected the **AIR** board to the main board.
-
-1. Download the data logging code.
+  1. Download the data logging code.
 
   ```
   cd ~
-  git clone https://github.com/raspberrypi/weather-station.git
+  git clone https://github.com/Texy/Weather-station.git
   ```
   
   This will create a new folder in the home directory called `weather-station`.
