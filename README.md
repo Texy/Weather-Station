@@ -102,7 +102,7 @@ Data logging code for the Raspberry Pi Weather Station Shield by Texy
 
   ```
   sudo apt-get update
-  sudo apt-get install i2c-tools python-smbus telnet apache2 mysql-server python-mysqldb php5 libapache2-mod-php5 php5-mysql -y
+  sudo apt-get install i2c-tools python-smbus git-core telnet apache2 mysql-server python-mysqldb php5 libapache2-mod-php5 php5-mysql -y
   ```
   
   This will take some time. You will be prompted to create and confirm a password for the root user of the MySQL database server.
