@@ -202,7 +202,7 @@ Data logging code for the Raspberry Pi Weather Station Shield by Texy
 1. Install additional Adaruit libraries in order to use the BME280 module.
 
   ```
-  sudo apt-get install build-essential
+  sudo apt-get install python-pip python-dev
 cd ~
 git clone https://github.com/adafruit/Adafruit_Python_GPIO.git
 cd ~\Adafruit_Python_GPIO
