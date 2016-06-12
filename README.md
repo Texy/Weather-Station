@@ -185,7 +185,7 @@ Data logging code for the Raspberry Pi Weather Station Shield by Texy
 
   ```
   cd ~
-  git clone https://github.com/Texy/Weather-station.git
+  git clone https://github.com/Texy/weather-station.git
   ```
   
   This will create a new folder in the home directory called `weather-station`.
