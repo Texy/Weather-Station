@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 import time, os, sys, socket, math, atexit
 import RPi.GPIO as GPIO
 try:
