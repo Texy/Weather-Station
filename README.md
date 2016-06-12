@@ -98,6 +98,12 @@ Data logging code for the Raspberry Pi Weather Station Shield by Texy
   
   You can passively display the time in the RTC using: `sudo hwclock -r`
 
+1. Remove the fake hardware clock package.
+
+  ```
+  sudo update-rc.d fake-hwclock remove
+  sudo apt-get remove fake-hwclock -y
+  ```
 
 1. Install the necessary software packages.
 
@@ -150,12 +156,6 @@ Data logging code for the Raspberry Pi Weather Station Shield by Texy
   
   Press `Ctrl - D` or type `exit` to quit MySQL.
 
-1. Remove the fake hardware clock package.
-
-  ```
-  sudo update-rc.d fake-hwclock remove
-  sudo apt-get remove fake-hwclock -y
-  ```
 
 1. Test that the I²C devices are online and working.
 
@@ -198,6 +198,17 @@ Data logging code for the Raspberry Pi Weather Station Shield by Texy
   cd weather-station
   git checkout prototype
   ```
+  
+1. Install additional Adaruit libraries in order to use the BME280 module.
+
+  ```
+  sudo apt-get install build-essential
+cd ~
+git clone https://github.com/adafruit/Adafruit_Python_GPIO.git
+cd ~\Adafruit_Python_GPIO
+sudo python setup.py install
+```
+
 1. Start the Weather Station daemon and test it.
 
   `sudo ~/weather-station/interrupt_daemon.py start`
@@ -227,6 +238,17 @@ Data logging code for the Raspberry Pi Weather Station Shield by Texy
   
   Use the `BYE` command to quit.
 
+1. UPDATE THE MYSQL CREDENTIALS FILE
+You'll need to use the password for the MySQL root user that you chose during installation. If you are not in the weather-station folder, type:
+
+'cd ~/weather-station'
+then:
+
+'nano credentials.mysql'
+Change the password field to the password you chose during installation of MySQL. The double quotes " enclosing the values are important, so take care not to remove them by mistake.
+
+Press Ctrl + O then Enter to save, and Ctrl + X to quit nano.
+
 1. Set the Weather Station daemon to automatically start at boot time.
 
   `sudo nano /etc/rc.local`
@@ -237,51 +259,25 @@ Data logging code for the Raspberry Pi Weather Station Shield by Texy
   echo "Starting Weather Station daemon..."
   /home/pi/weather-station/interrupt_daemon.py start
   ```
-  
-1. If you wish you can register your Weather Station with a cloud based **Oracle** database so that your data can be used by other schools.
 
-  [Oracle Apex Database](https://apex.oracle.com/pls/apex/f?p=84942:LOGIN_DESKTOP:9427101834476:&tz=0:00)
-  
-  You will need to complete a form whereupon you must wait for a Raspberry Pi admin to approve your school in the database. Once approved an activation email will be sent to you containing a verification code. Log in using your **school name** for the username and the password that you chose. You will then be prompted for the verification code from the email.
-  
-  Many weather stations can belong to one school. Once you have logged in you'll need to create a new weather station under your school. The *latitude* and *longitude* of the weather station will be required for this. Once you have created a weather station it will have its own password automatically generated, this is used by the weather station itself when it uploads the measurements to Oracle and is separate to your school login.
-  
-  *Note:* There is a known bug here where the *Add Weather Station* screen does not show a `Create` button, but only a `Return` button on the right. If you experience this just log out and back in and that should fix it.
-  
-1. Add the weather station name and password to the local Oracle credentials file. This allows the code that uploads to Oracle to know what credentials to use.
-
-  `cd ~/weather-station`
-  
-  `nano credentials.oracle.template`
-  
-  Replace the `name` and `key` parameters with the `Weather Station Name` and `Passcode` of the weather station as specified in Oracle (under *Home > Weather Stations*). The double quotes `"` enclosing these values in this file are important so take care not to remove them by mistake.
-  
-  Press `Ctrl - O` then `Enter` to save and `Ctrl - X` to quit nano.
-  
-1. Rename the Oracle credentials template file to enable it.
-
-  `mv credentials.oracle.template credentials.oracle`
-
-1. Update the to the local MySQL credentials file with the password for the MySQL *root* user that you chose during installation.
-
-  `nano credentials.mysql`
-  
-  The PASSWORD field is probably the only one you need to change (unless you also chose `raspberry`). The double quotes `"` enclosing the values are important so take care not to remove them by mistake.
-  
-  Press `Ctrl - O` then `Enter` to save and `Ctrl - X` to quit nano.
-
-1. The main entry points for the code are `log_all_sensors.py` and `upload_to_oracle.py`. These will be called by the [cron](http://en.wikipedia.org/wiki/Cron) scheduler to automatically take measurements. The measurements will be saved in the local MySQL database as well as uploaded to the Oracle Apex Database online (if you registered).
+1. The main entry point for the code are `log_all_sensors.py`. This will be called by the [cron](http://en.wikipedia.org/wiki/Cron) scheduler to automatically take measurements. The measurements will be saved in the local MySQL database.
 
   The template crontab file `crontab.save` is provided as a default. If you wish to change the measurement or upload frequency then edit this file before going onto the next step:
   
-  `nano crontab.save`
+  ```
+  cd ~/weather-station/
+  nano crontab.save
+  ```
   
   Press `Ctrl - O` then `Enter` to save and `Ctrl - X` to quit nano when you're done.
 
 1. Heads up! At this point you may wish to stop and check out the Weather Station scheme of work ([here](https://github.com/raspberrypilearning/weather-station-sow)).
 1. Enable cron to automatically start taking measurements, also known as *data logging mode*. 
 
-  `crontab < crontab.save`
+  ```
+  cd ~/weather-station/
+  crontab < crontab.save
+  ```
 
   Your weather station is now live and recording data at timed intervals.
   
