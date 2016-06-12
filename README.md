@@ -53,6 +53,7 @@ Data logging code for the Raspberry Pi Weather Station Shield by Texy
   Confirm that the following lines are already present, if not add them :
   
   dtparam=i2c_arm=on
+  
   dtoverlay=w1-gpio
 
   Press `Ctrl - O` then `Enter` to save and `Ctrl - X` to quit nano.
