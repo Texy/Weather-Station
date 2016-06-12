@@ -182,7 +182,7 @@ Data logging code for the Raspberry Pi Weather Station Shield by Texy
   - `69` = MCP3428. Analogue to Digital Converter.
   - `76` = BME280 presure, humdity and temperature sensor module
 
-  1. Download the data logging code.
+1. Download the data logging code.
 
   ```
   cd ~
