@@ -241,10 +241,11 @@ sudo python setup.py install
 1. UPDATE THE MYSQL CREDENTIALS FILE
 You'll need to use the password for the MySQL root user that you chose during installation. If you are not in the weather-station folder, type:
 
-'cd ~/weather-station'
-then:
+```
+cd ~/weather-station
+nano credentials.mysql
+```
 
-'nano credentials.mysql'
 Change the password field to the password you chose during installation of MySQL. The double quotes " enclosing the values are important, so take care not to remove them by mistake.
 
 Press Ctrl + O then Enter to save, and Ctrl + X to quit nano.
